@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
+import React,{ useState,useEffect } from 'react';
+import Sidebar from './Sidebar';
 import './App.css';
-
-function App() {
+import Chat from './Chat';
+import { BrowserRouter as Router,Switch,Route } from 'react-router-dom';
+import Login from './Login';
+import {connect} from 'react-redux';
+function App(props) {
+  const [user,setUser] = useState(null);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+        {!props.user ? (
+          <Login />
+        ) : (
+          <div className="app__body">
+            <Router>
+              <Sidebar />
+              <Switch>
+                <Route exact path="/" component={Chat} />
+                <Route exact path="/rooms/:roomId" component={Chat} />
+              </Switch>
+            </Router>
+        </div>
+        )}
     </div>
   );
 }
 
-export default App;
+export default connect((state,props) =>({
+  user:state.auth.user
+}))(App);
